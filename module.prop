@@ -1,0 +1,7 @@
+id=bash-aarch64
+name=Bourne Again SHell for AArch64
+version=v1
+versionCode=1
+author=ianmacd
+description=Bash is an sh-compatible shell that incorporates useful features from the Korn shell (ksh) and C shell (csh).
+minMagisk=17000

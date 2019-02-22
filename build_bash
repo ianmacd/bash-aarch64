@@ -1,0 +1,37 @@
+#!/bin/bash
+
+aarch64_tools=~/src/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu/bin
+PATH=$aarch64_tools:$PATH
+
+builddir=~/tmp/Downloads/bash-5.0
+moddir=~/src/magisk-modules/bash
+moddir=$PWD
+
+carp_exit() {
+  echo '       Edit this build script and try again.' >&2
+  exit $1
+}
+
+if [ ! -d $aarch64_tools ]; then
+  echo 'Error: Please ensure Linaro aarch64 toolchain is in $PATH.' >&2
+  carp_exit 1
+fi
+
+if [ ! -d $builddir ]; then
+  echo 'Error: Please set $builddir to the bash source code path.' >&2
+  carp_exit 2
+fi
+
+cd $builddir
+make clean
+
+prefix=$PWD/system
+[ ! -d $prefix ] && mkdir $prefix
+./configure --host=aarch64-linux-gnu --enable-static-link --without-bash-malloc --enable-largefile --enable-alias --enable-history --prefix=$prefix
+make
+aarch64-linux-gnu-strip bash
+make install
+
+cp -p $prefix/bin/bash $moddir/system/bin
+cd -
+7za a -tzip -mx9 -x'!.git*' ../bash.zip
